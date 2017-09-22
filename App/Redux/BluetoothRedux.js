@@ -3,7 +3,6 @@ import Immutable from 'seamless-immutable'
 
 /* ------------- Types and Action Creators ------------- */
 
-
 // Refactor to the right action creators
 const { Types, Creators } = createActions({
   startScan: null,
@@ -12,7 +11,7 @@ const { Types, Creators } = createActions({
   setAppState: ['appState']
 })
 
-console.log(Types, Creators)
+console.log('BT', Types, Creators)
 
 export const BluetoothTypes = Types
 export default Creators
@@ -28,23 +27,25 @@ export const INITIAL_STATE = Immutable({
 /* ------------- Reducers ------------- */
 
 // request the avatar for a user
-export const request = (state, { username }) =>
-  state.merge({ fetching: true, username, avatar: null })
+export const start = (state) =>
+  state.merge({ scanning: true })
 
 // successful avatar lookup
-export const success = (state, action) => {
-  const { avatar } = action
-  return state.merge({ fetching: false, error: null, avatar })
-}
+export const end = (state) =>
+  state.merge({ scanning: false })
+
+export const peripheral = (state, { peripherals }) =>
+  state.merge({ peripherals })
 
 // failed to get the avatar
-export const failure = (state) =>
-  state.merge({ fetching: false, error: true, avatar: null })
+export const app = (state, { appState }) =>
+  state.merge({ appState })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.USER_REQUEST]: request,
-  [Types.USER_SUCCESS]: success,
-  [Types.USER_FAILURE]: failure
+  [Types.START_SCAN]: start,
+  [Types.END_SCAN]: end,
+  [Types.SET_PERIPHERALS]: peripheral,
+  [Types.SET_APP_STATE]: app
 })
