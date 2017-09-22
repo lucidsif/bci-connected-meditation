@@ -3,10 +3,13 @@ import Immutable from 'seamless-immutable'
 
 /* ------------- Types and Action Creators ------------- */
 
+
+// Refactor to the right action creators
 const { Types, Creators } = createActions({
-  scanning: ['status'],
-  userSuccess: ['avatar'],
-  appState: null
+  startScan: null,
+  endScan: null,
+  setPeripherals: ['peripherals'],
+  setAppState: ['appState']
 })
 
 console.log(Types, Creators)
