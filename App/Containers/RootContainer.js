@@ -53,6 +53,7 @@ class RootContainer extends Component {
         console.log('Connected peripherals: ' + peripheralsArray.length)
       })
     }
+    // dispatch instead of setting local state
     this.setState({appState: nextAppState})
   }
 
@@ -63,6 +64,7 @@ class RootContainer extends Component {
     this.handlerUpdate.remove()
   }
 
+  // refactor to redux
   handleDisconnectedPeripheral (data) {
     let peripherals = this.state.peripherals
     let peripheral = peripherals.get(data.peripheral)
@@ -80,27 +82,32 @@ class RootContainer extends Component {
 
   handleStopScan () {
     console.log('Scan is stopped')
+    // dispatch action creator
     this.setState({ scanning: false })
   }
 
   startScan () {
+    // get scanning state from props instead of local state
     if (!this.state.scanning) {
       BleManager.scan([], 3, true).then((results) => {
         console.log('Scanning...')
+        // dispatch action creator to change state of scanning
         this.setState({scanning: true})
       })
     }
   }
 
   handleDiscoverPeripheral (peripheral) {
+    // get peripherals state from props instead of locla state
     var peripherals = this.state.peripherals
     if (!peripherals.has(peripheral.id)) {
       console.log('Got ble peripheral', peripheral)
       peripherals.set(peripheral.id, peripheral)
+      // dispatch peripherals action creator instead of settin state locally
       this.setState({ peripherals })
     }
   }
-
+// refactor to redux
   test (peripheral) {
     if (peripheral) {
       if (peripheral.connected) {
@@ -169,7 +176,7 @@ class RootContainer extends Component {
     const list = Array.from(this.state.peripherals.values())
     const dataSource = ds.cloneWithRows(list)
 
-    // this.startScan()
+    this.startScan()
 
     return (
       <View style={styles.applicationView}>

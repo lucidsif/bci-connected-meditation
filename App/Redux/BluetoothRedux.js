@@ -4,24 +4,22 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  userRequest: ['username'],
+  scanning: ['status'],
   userSuccess: ['avatar'],
-  userFailure: null
+  appState: null
 })
 
-console.log(Types)
-console.log(Creators)
+console.log(Types, Creators)
 
-export const GithubTypes = Types
+export const BluetoothTypes = Types
 export default Creators
 
 /* ------------- Initial State ------------- */
 
 export const INITIAL_STATE = Immutable({
-  avatar: null,
-  fetching: null,
-  error: null,
-  username: null
+  scanning: null,
+  peripherals: new Map(),
+  appState: ''
 })
 
 /* ------------- Reducers ------------- */
