@@ -3,6 +3,7 @@ import DebugConfig from '../Config/DebugConfig'
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 import RootContainer from './RootContainer'
+import BlueRootContainer from './BlueRootContainer'
 import createStore from '../Redux'
 
 // create our store
@@ -21,7 +22,7 @@ class App extends Component {
   render () {
     return (
       <Provider store={store}>
-        <RootContainer />
+        <BlueRootContainer />
       </Provider>
     )
   }

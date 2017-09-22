@@ -11,8 +11,6 @@ const { Types, Creators } = createActions({
   setAppState: ['appState']
 })
 
-console.log('BT', Types, Creators)
-
 export const BluetoothTypes = Types
 export default Creators
 
@@ -27,19 +25,15 @@ export const INITIAL_STATE = Immutable({
 /* ------------- Reducers ------------- */
 
 // request the avatar for a user
-export const start = (state) =>
-  state.merge({ scanning: true })
+export const start = (state) => state.merge({ scanning: true })
 
 // successful avatar lookup
-export const end = (state) =>
-  state.merge({ scanning: false })
+export const end = (state) => state.merge({ scanning: false })
 
-export const peripheral = (state, { peripherals }) =>
-  state.merge({ peripherals })
+export const peripheral = (state, { peripherals }) => state.merge({ peripherals })
 
 // failed to get the avatar
-export const app = (state, { appState }) =>
-  state.merge({ appState })
+export const app = (state, { appState }) => state.merge({ appState })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
