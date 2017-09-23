@@ -16,21 +16,29 @@ export default Creators
 
 /* ------------- Initial State ------------- */
 
-export const INITIAL_STATE = Immutable({
+export const INITIAL_STATE = {
   scanning: null,
   peripherals: new Map(),
   appState: ''
-})
+}
 
 /* ------------- Reducers ------------- */
 
-export const start = (state) => state.merge({ scanning: true })
+// export const start = (state) => state.merge({ scanning: true })
+//
+// export const end = (state) => state.merge({ scanning: false })
+//
+// export const peripheral = (state, { peripherals }) => state.merge({ peripherals })
+//
+// export const app = (state, { appState }) => state.merge({ appState })
 
-export const end = (state) => state.merge({ scanning: false })
+export const start = (state) => Object.assign({}, state, {scanning: true})
 
-export const peripheral = (state, { peripherals }) => state.merge({ peripherals })
+export const end = (state) => Object.assign({}, state, {scanning: false})
 
-export const app = (state, { appState }) => state.merge({ appState })
+export const peripheral = (state, { peripherals }) => Object.assign({}, state, peripherals)
+
+export const app = (state, { appState }) => Object.assign({}, state, {appState})
 
 /* ------------- Hookup Reducers To Types ------------- */
 

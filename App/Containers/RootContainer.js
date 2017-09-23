@@ -176,7 +176,9 @@ class RootContainer extends Component {
     const list = Array.from(this.state.peripherals.values())
     const dataSource = ds.cloneWithRows(list)
 
+    console.log('list peripherals', this.state.peripherals)
     // this.startScan()
+
 
     return (
       <View style={styles.applicationView}>

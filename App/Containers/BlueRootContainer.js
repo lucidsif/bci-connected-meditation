@@ -14,7 +14,6 @@ const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
 import BluetoothActions from '../Redux/BluetoothRedux'
 
-
 class RootContainer extends Component {
   constructor () {
     super()
@@ -49,14 +48,16 @@ class RootContainer extends Component {
   }
 
   handleAppStateChange (nextAppState) {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    // if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    if (this.props.bluetooth.appState.match(/inactive|background/) && nextAppState === 'active') {
       console.log('App has come to the foreground!')
       BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
         console.log('Connected peripherals: ' + peripheralsArray.length)
       })
     }
     // dispatch instead of setting local state
-    this.setState({appState: nextAppState})
+    // this.setState({appState: nextAppState})
+    this.props.set({appState: nextAppState})
   }
 
   componentWillUnmount () {
@@ -68,12 +69,14 @@ class RootContainer extends Component {
 
   // refactor to redux
   handleDisconnectedPeripheral (data) {
-    let peripherals = this.state.peripherals
+    // let peripherals = this.state.peripherals
+    let peripherals = this.props.bluetooth.peripherals
     let peripheral = peripherals.get(data.peripheral)
     if (peripheral) {
       peripheral.connected = false
       peripherals.set(peripheral.id, peripheral)
-      this.setState({peripherals})
+      // this.setState({peripherals})
+      this.props.setPeripherals(peripherals)
     }
     console.log('Disconnected from ' + data.peripheral)
   }
@@ -85,28 +88,32 @@ class RootContainer extends Component {
   handleStopScan () {
     console.log('Scan is stopped')
     // dispatch action creator
-    this.setState({ scanning: false })
+    // this.setState({ scanning: false })
+    this.props.endScan()
   }
 
   startScan () {
     // get scanning state from props instead of local state
-    if (!this.state.scanning) {
+    // if (!this.state.bluetooth.scanning) {
+    if (!this.props.bluetooth.scanning) {
       BleManager.scan([], 3, true).then((results) => {
         console.log('Scanning...')
         // dispatch action creator to change state of scanning
-        this.setState({scanning: true})
+        // this.setState({scanning: true})
+        this.props.startScan()
       })
     }
   }
 
   handleDiscoverPeripheral (peripheral) {
     // get peripherals state from props instead of locla state
-    var peripherals = this.state.peripherals
+    var peripherals = this.props.bluetooth.peripherals
     if (!peripherals.has(peripheral.id)) {
       console.log('Got ble peripheral', peripheral)
       peripherals.set(peripheral.id, peripheral)
       // dispatch peripherals action creator instead of settin state locally
-      this.setState({ peripherals })
+      // this.setState({ peripherals })
+      this.props.setPeripherals(peripherals)
     }
   }
 // refactor to redux
@@ -116,12 +123,14 @@ class RootContainer extends Component {
         BleManager.disconnect(peripheral.id)
       } else {
         BleManager.connect(peripheral.id).then(() => {
-          let peripherals = this.state.peripherals
+          // let peripherals = this.state.peripherals
+          let peripherals = this.props.peripherals
           let p = peripherals.get(peripheral.id)
           if (p) {
             p.connected = true
             peripherals.set(peripheral.id, p)
-            this.setState({peripherals})
+            // this.setState({peripherals})
+            this.props.setPeripherals(peripherals)
           }
           console.log('Connected to ' + peripheral.id)
 
@@ -159,10 +168,13 @@ class RootContainer extends Component {
   }
 
   render () {
-    const list = Array.from(this.state.peripherals.values())
+    // const list = Array.from(this.state.peripherals.values())
+    console.log('peripherals', this.props.bluetooth.peripherals)
+    const list = Array.from(this.props.bluetooth.peripherals.values())
+    // console.log('list peripherals', this.props.bluetooth.peripherals)
     const dataSource = ds.cloneWithRows(list)
 
-    // this.startScan()
+    this.startScan()
 
     console.log('BT-container', this.props)
 
