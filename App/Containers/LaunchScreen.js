@@ -99,7 +99,7 @@ export class LaunchScreen extends Component {
     // get scanning state from props instead of local state
     // if (!this.state.bluetooth.scanning) {
     if (!this.props.bluetooth.scanning) {
-      BleManager.scan([], 10, true).then((results) => {
+      BleManager.scan([], 120, true).then((results) => {
         console.log('Scanning...', results)
         // dispatch action creator to change state of scanning
         // this.setState({scanning: true})
@@ -128,8 +128,9 @@ export class LaunchScreen extends Component {
         BleManager.disconnect(peripheral.id)
       } else {
         BleManager.connect(peripheral.id).then(() => {
+          console.log('after connect')
           // let peripherals = this.state.peripherals
-          let peripherals = this.props.peripherals
+          let peripherals = this.props.bluetooth.peripherals
           let p = peripherals.get(peripheral.id)
           if (p) {
             p.connected = true
@@ -137,8 +138,7 @@ export class LaunchScreen extends Component {
             // this.setState({peripherals})
             this.props.setPeripherals(peripherals)
           }
-          console.log('TestConnected to ******' + peripheral.id)
-
+          console.log('green' + peripheral.id)
           // this.setTimeout(() => {
             // Test using bleno's pizza example
             // https://github.com/sandeepmistry/bleno/tree/master/examples/pizza
@@ -166,7 +166,7 @@ export class LaunchScreen extends Component {
           //   })
           // }, 900)
         }).catch((error) => {
-          console.log('!!!!!!Connection error!!!!!!', error)
+          console.log('red', error)
         })
       }
     }
@@ -191,11 +191,7 @@ export class LaunchScreen extends Component {
             enableEmptySections
             dataSource={dataSource}
             renderRow={(item) => {
-              console.log('rendering item**', item)
-              if (item.name === 'Tawsif’s MacBook Pro') {
-                console.log(item)
-              }
-              const color = item.connected ? 'green' : 'red'
+              const color = item.connected ? 'green' : 'white'
               return (
                 <TouchableHighlight onPress={() => this.test(item)}>
                   <View style={[styles.row, {backgroundColor: color}]}>
