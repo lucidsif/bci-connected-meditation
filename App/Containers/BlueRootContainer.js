@@ -3,7 +3,6 @@ import { View, StatusBar, ListView, NativeModules, NativeEventEmitter, AppState 
 import ReduxNavigation from '../Navigation/ReduxNavigation'
 import { connect } from 'react-redux'
 import StartupActions from '../Redux/StartupRedux'
-import ReduxPersist from '../Config/ReduxPersist'
 // Styles
 import styles from './Styles/RootContainerStyles'
 
@@ -173,9 +172,9 @@ class RootContainer extends Component {
     const list = Array.from(this.props.bluetooth.peripherals.values())
     const dataSource = ds.cloneWithRows(list)
 
-    this.startScan()
+    // this.startScan()
 
-    console.log('BT-container', this.props)
+    console.log('should not be running!!!!', this.props)
 
     return (
       <View style={styles.applicationView}>
