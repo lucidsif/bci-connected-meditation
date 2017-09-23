@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Text, Image, ListView, NativeModules, NativeEventEmitter, AppState } from 'react-native'
+import { View, ScrollView, Text, Image, ListView, NativeModules, NativeEventEmitter, AppState, Button } from 'react-native'
 import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
 import { connect } from 'react-redux'
 import { Images } from '../Themes'
-import ReduxPersist from '../Config/ReduxPersist'
+import BleManager from 'react-native-ble-manager'
+import BluetoothActions from '../Redux/BluetoothRedux'
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-import BleManager from 'react-native-ble-manager'
 const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
-import BluetoothActions from '../Redux/BluetoothRedux'
 
 export class LaunchScreen extends Component {
   constructor () {
@@ -27,11 +26,6 @@ export class LaunchScreen extends Component {
   }
 
   componentDidMount () {
-    // if redux persist is not active fire startup action
-    // if (!ReduxPersist.active) {
-    //   this.props.startup()
-    // }
-
     AppState.addEventListener('change', this.handleAppStateChange)
 
     BleManager.start({showAlert: false})
@@ -185,7 +179,11 @@ export class LaunchScreen extends Component {
             </Text>
           </View>
 
-          <DevscreensButton />
+          <Button
+            onPress={() => this.props.navigation.navigate('AffectScreen')}
+            title='Go to Affect Screen'
+            accessibilityLabel='Learn more about this button'
+          />
         </ScrollView>
       </View>
     )
