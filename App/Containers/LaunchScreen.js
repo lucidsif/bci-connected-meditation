@@ -138,33 +138,10 @@ export class LaunchScreen extends Component {
             // this.setState({peripherals})
             this.props.setPeripherals(peripherals)
           }
-          console.log('green' + peripheral.id)
-          // this.setTimeout(() => {
-            // Test using bleno's pizza example
-            // https://github.com/sandeepmistry/bleno/tree/master/examples/pizza
-          //   BleManager.retrieveServices(peripheral.id).then((peripheralInfo) => {
-          //     console.log(peripheralInfo)
-          //     var service = '13333333-3333-3333-3333-333333333337'
-          //     var bakeCharacteristic = '13333333-3333-3333-3333-333333330003'
-          //     var crustCharacteristic = '13333333-3333-3333-3333-333333330001'
-          //
-          //     this.setTimeout(() => {
-          //       BleManager.startNotification(peripheral.id, service, bakeCharacteristic).then(() => {
-          //         console.log('Started notification on ' + peripheral.id)
-          //         this.setTimeout(() => {
-          //           BleManager.write(peripheral.id, service, crustCharacteristic, [0]).then(() => {
-          //             console.log('Writed NORMAL crust')
-          //             BleManager.write(peripheral.id, service, bakeCharacteristic, [1, 95]).then(() => {
-          //               console.log('Writed 351 temperature, the pizza should be BAKED')
-          //             })
-          //           })
-          //         }, 500)
-          //       }).catch((error) => {
-          //         console.log('Notification error', error)
-          //       })
-          //     }, 200)
-          //   })
-          // }, 900)
+          console.log('green' + peripheral.name)
+          return BleManager.retrieveServices(peripheral.id)
+        }).then((peripheralInfo) => {
+          console.log('services', peripheralInfo)
         }).catch((error) => {
           console.log('red', error)
         })
