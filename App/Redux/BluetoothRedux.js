@@ -36,7 +36,9 @@ export const start = (state) => Object.assign({}, state, {scanning: true})
 
 export const end = (state) => Object.assign({}, state, {scanning: false})
 
-export const peripheral = (state, { peripherals }) => Object.assign({}, state, peripherals)
+export const peripheral = (state, { peripherals }) => {
+  return Object.assign({}, state, {peripherals: new Map(peripherals)})
+}
 
 export const app = (state, { appState }) => Object.assign({}, state, {appState})
 

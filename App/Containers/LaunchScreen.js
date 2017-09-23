@@ -1,6 +1,16 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Text, Image, ListView, NativeModules, NativeEventEmitter, AppState, Button } from 'react-native'
-import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
+import {
+  View,
+  ScrollView,
+  Text,
+  Image,
+  ListView,
+  NativeModules,
+  NativeEventEmitter,
+  AppState,
+  Button,
+  TouchableHighlight
+} from 'react-native'
 import { connect } from 'react-redux'
 import { Images } from '../Themes'
 import BleManager from 'react-native-ble-manager'
@@ -9,6 +19,8 @@ import BluetoothActions from '../Redux/BluetoothRedux'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 
+// Data blob driven abstraction over ScrollView to efficiently render long lists
+// rowHasChanged checks if the row has changed
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
 const BleManagerModule = NativeModules.BleManager
@@ -38,6 +50,7 @@ export class LaunchScreen extends Component {
 
   handleAppStateChange (nextAppState) {
     // if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    console.log('in handleappstate', this.props.bluetooth)
     if (this.props.bluetooth.appState.match(/inactive|background/) && nextAppState === 'active') {
       console.log('App has come to the foreground!')
       BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
@@ -56,8 +69,9 @@ export class LaunchScreen extends Component {
     this.handlerUpdate.remove()
   }
 
-  // refactor to redux
+  // NOTE: this has not been called yet!!
   handleDisconnectedPeripheral (data) {
+    console.log('disconnected!!!**', data)
     // let peripherals = this.state.peripherals
     let peripherals = this.props.bluetooth.peripherals
     let peripheral = peripherals.get(data.peripheral)
@@ -71,11 +85,11 @@ export class LaunchScreen extends Component {
   }
 
   handleUpdateValueForCharacteristic (data) {
+    console.log('handleupdate ran???')
     console.log('Received data from ' + data.peripheral + ' characteristic ' + data.characteristic, data.value)
   }
 
   handleStopScan () {
-    console.log('Scan is stopped')
     // dispatch action creator
     // this.setState({ scanning: false })
     this.props.endScan()
@@ -85,8 +99,8 @@ export class LaunchScreen extends Component {
     // get scanning state from props instead of local state
     // if (!this.state.bluetooth.scanning) {
     if (!this.props.bluetooth.scanning) {
-      BleManager.scan([], 3, true).then((results) => {
-        console.log('Scanning...')
+      BleManager.scan([], 10, true).then((results) => {
+        console.log('Scanning...', results)
         // dispatch action creator to change state of scanning
         // this.setState({scanning: true})
         this.props.startScan()
@@ -95,10 +109,10 @@ export class LaunchScreen extends Component {
   }
 
   handleDiscoverPeripheral (peripheral) {
-    // get peripherals state from props instead of locla state
+    // get peripherals state from props instead of local state
     var peripherals = this.props.bluetooth.peripherals
     if (!peripherals.has(peripheral.id)) {
-      console.log('Got ble peripheral', peripheral)
+      // console.log('Got ble peripheral', peripheral)
       peripherals.set(peripheral.id, peripheral)
       // dispatch peripherals action creator instead of settin state locally
       // this.setState({ peripherals })
@@ -107,8 +121,10 @@ export class LaunchScreen extends Component {
   }
 
   test (peripheral) {
+    console.log('test clicked')
     if (peripheral) {
       if (peripheral.connected) {
+        console.log('peripheral disconnected**')
         BleManager.disconnect(peripheral.id)
       } else {
         BleManager.connect(peripheral.id).then(() => {
@@ -121,36 +137,36 @@ export class LaunchScreen extends Component {
             // this.setState({peripherals})
             this.props.setPeripherals(peripherals)
           }
-          console.log('Connected to ' + peripheral.id)
+          console.log('TestConnected to ******' + peripheral.id)
 
-          this.setTimeout(() => {
+          // this.setTimeout(() => {
             // Test using bleno's pizza example
             // https://github.com/sandeepmistry/bleno/tree/master/examples/pizza
-            BleManager.retrieveServices(peripheral.id).then((peripheralInfo) => {
-              console.log(peripheralInfo)
-              var service = '13333333-3333-3333-3333-333333333337'
-              var bakeCharacteristic = '13333333-3333-3333-3333-333333330003'
-              var crustCharacteristic = '13333333-3333-3333-3333-333333330001'
-
-              this.setTimeout(() => {
-                BleManager.startNotification(peripheral.id, service, bakeCharacteristic).then(() => {
-                  console.log('Started notification on ' + peripheral.id)
-                  this.setTimeout(() => {
-                    BleManager.write(peripheral.id, service, crustCharacteristic, [0]).then(() => {
-                      console.log('Writed NORMAL crust')
-                      BleManager.write(peripheral.id, service, bakeCharacteristic, [1, 95]).then(() => {
-                        console.log('Writed 351 temperature, the pizza should be BAKED')
-                      })
-                    })
-                  }, 500)
-                }).catch((error) => {
-                  console.log('Notification error', error)
-                })
-              }, 200)
-            })
-          }, 900)
+          //   BleManager.retrieveServices(peripheral.id).then((peripheralInfo) => {
+          //     console.log(peripheralInfo)
+          //     var service = '13333333-3333-3333-3333-333333333337'
+          //     var bakeCharacteristic = '13333333-3333-3333-3333-333333330003'
+          //     var crustCharacteristic = '13333333-3333-3333-3333-333333330001'
+          //
+          //     this.setTimeout(() => {
+          //       BleManager.startNotification(peripheral.id, service, bakeCharacteristic).then(() => {
+          //         console.log('Started notification on ' + peripheral.id)
+          //         this.setTimeout(() => {
+          //           BleManager.write(peripheral.id, service, crustCharacteristic, [0]).then(() => {
+          //             console.log('Writed NORMAL crust')
+          //             BleManager.write(peripheral.id, service, bakeCharacteristic, [1, 95]).then(() => {
+          //               console.log('Writed 351 temperature, the pizza should be BAKED')
+          //             })
+          //           })
+          //         }, 500)
+          //       }).catch((error) => {
+          //         console.log('Notification error', error)
+          //       })
+          //     }, 200)
+          //   })
+          // }, 900)
         }).catch((error) => {
-          console.log('Connection error', error)
+          console.log('!!!!!!Connection error!!!!!!', error)
         })
       }
     }
@@ -160,29 +176,35 @@ export class LaunchScreen extends Component {
     const list = Array.from(this.props.bluetooth.peripherals.values())
     const dataSource = ds.cloneWithRows(list)
 
-    this.startScan()
-
-    console.log('launch screen', this.props)
-
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
-        <ScrollView style={styles.container}>
-          <View style={styles.centered}>
-            <Image source={Images.launch} style={styles.logo} />
+        <TouchableHighlight style={{marginTop: 40, margin: 20, padding: 20, backgroundColor: '#ccc'}} onPress={() => this.startScan()}>
+          <Text>Scan Bluetooth ({this.props.bluetooth.scanning ? 'on' : 'off'})</Text>
+        </TouchableHighlight>
+        <ScrollView style={styles.scroll}>
+          {(list.length == 0) &&
+          <View style={{flex: 1, margin: 20}}>
+            <Text style={{textAlign: 'center'}}>No peripherals</Text>
           </View>
-
-          <View style={styles.section} >
-            <Image source={Images.ready} />
-            <Text style={styles.sectionText}>
-              Test Change3
-            </Text>
-          </View>
-
-          <Button
-            onPress={() => this.props.navigation.navigate('AffectScreen')}
-            title='Go to Affect Screen'
-            accessibilityLabel='Learn more about this button'
+          }
+          <ListView
+            enableEmptySections
+            dataSource={dataSource}
+            renderRow={(item) => {
+              console.log('rendering item**', item)
+              if (item.name === 'Tawsif’s MacBook Pro') {
+                console.log(item)
+              }
+              const color = item.connected ? 'green' : 'red'
+              return (
+                <TouchableHighlight onPress={() => this.test(item)}>
+                  <View style={[styles.row, {backgroundColor: color}]}>
+                    <Text style={{fontSize: 12, textAlign: 'center', color: '#333333', padding: 10}}>{item.name}</Text>
+                    <Text style={{fontSize: 8, textAlign: 'center', color: '#333333', padding: 10}}>{item.id}</Text>
+                  </View>
+                </TouchableHighlight>
+              )
+            }}
           />
         </ScrollView>
       </View>
@@ -196,8 +218,17 @@ const mapStateToProps = ({bluetooth}) => ({bluetooth})
 const mapDispatchToProps = (dispatch) => ({
   startScan: () => dispatch(BluetoothActions.startScan()),
   endScan: () => dispatch(BluetoothActions.endScan()),
+  // am i writing these wrong?
   setPeripherals: (peripherals) => dispatch(BluetoothActions.setPeripherals(peripherals)),
   setAppState: (appState) => dispatch(BluetoothActions.setAppState(appState))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen)
+
+// <Button
+// onPress={() => this.props.navigation.navigate('AffectScreen')}
+// title='Go to Affect Screen'
+// accessibilityLabel='Learn more about this button'
+//   />
+
+// BUG: clicking scan (and setting a new peripherals map), appState is no logner recognized)
