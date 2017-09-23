@@ -57,7 +57,7 @@ class RootContainer extends Component {
     }
     // dispatch instead of setting local state
     // this.setState({appState: nextAppState})
-    this.props.set({appState: nextAppState})
+    this.props.setAppState(nextAppState)
   }
 
   componentWillUnmount () {
@@ -169,9 +169,8 @@ class RootContainer extends Component {
 
   render () {
     // const list = Array.from(this.state.peripherals.values())
-    console.log('peripherals', this.props.bluetooth.peripherals)
+    // console.log('peripherals', this.props.bluetooth.peripherals)
     const list = Array.from(this.props.bluetooth.peripherals.values())
-    // console.log('list peripherals', this.props.bluetooth.peripherals)
     const dataSource = ds.cloneWithRows(list)
 
     this.startScan()
