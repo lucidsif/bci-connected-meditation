@@ -12,6 +12,8 @@ const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 import BleManager from 'react-native-ble-manager'
 const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
+import BluetoothActions from '../Redux/BluetoothRedux'
+
 
 class RootContainer extends Component {
   constructor () {
@@ -160,7 +162,7 @@ class RootContainer extends Component {
     const list = Array.from(this.state.peripherals.values())
     const dataSource = ds.cloneWithRows(list)
 
-    this.startScan()
+    // this.startScan()
 
     console.log('BT-container', this.props)
 
@@ -177,7 +179,11 @@ const mapStateToProps = ({bluetooth}) => ({bluetooth})
 
 // wraps dispatch to create nicer functions to call within our component
 const mapDispatchToProps = (dispatch) => ({
-  startup: () => dispatch(StartupActions.startup())
+  startup: () => dispatch(StartupActions.startup()),
+  startScan: () => dispatch(BluetoothActions.startScan()),
+  endScan: () => dispatch(BluetoothActions.endScan()),
+  setPeripherals: (peripherals) => dispatch(BluetoothActions.setPeripherals(peripherals)),
+  setAppState: (appState) => dispatch(BluetoothActions.setAppState(appState))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RootContainer)
